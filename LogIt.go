@@ -25,28 +25,46 @@ var Syslog *syslog
 // init function - initialize values and processes of the file
 func init() {
 	lg := syslog{}
-	lg.Filepath = fmt.Sprintf("%s%s%s", "logs/", time.Now().Format("2006_01_02"), ".log")
+	lg.Filepath = fmt.Sprintf("%s%s%s", "logs/", time.Now().Format("2006_01_02"),
+		".log")
 	lg.loadCategories() // loads all categories
 	Syslog = &lg
 }
 
-// checkPath method - verifies if the directory exists and is writable
-func (lg *syslog) checkPath() bool {
-	_, err := os.Stat(filepath.Dir(lg.Filepath)) // check if directory exists and is writable
+// getLogDate method - returns a string with the log format date
+func (lg *syslog) getLogDate() string {
+	return time.Now().Format("2006/01/02 15:04:05")
+}
+
+// createDir function - function attempts to create the log file dir in case it doesn't exists
+func (lg *syslog) createDir() (err error) {
+	err = os.MkdirAll(filepath.Dir(lg.Filepath), 0755)
 	if err != nil {
-		when := time.Now().Format("2006-01-02 15:04:05")
-		msg := fmt.Sprintf("The specified path %s for dependency LogIt doesn't exists or is not writable", lg.Filepath)
-		fmt.Printf("%s %s %s on %s\n", when, lg.categories["warning"][0], msg, lg.GetTraceMsg())
-		return false
+		msg := fmt.Sprintf("Logit error: path %s doesn't exists or is not writable and cannot be created",
+			lg.Filepath)
+		fmt.Printf("%s %s on %s\n", lg.getLogDate(),
+			msg, lg.GetTraceMsg())
 	}
-	return true
+	return err
+}
+
+// checkPath method - verifies if the directory exists and is writable
+func (lg *syslog) checkPath() (err error) {
+	_, err = os.Stat(filepath.Dir(lg.Filepath)) // check if directory exists and is writable
+	return
 }
 
 // startLog method - changes the default filepath
-func (lg *syslog) startLog() {
-	lg.checkPath()
-	lg.file, _ = os.OpenFile(lg.Filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 1444)
-	lg.log = log.New(lg.file, "", log.Ldate|log.Ltime)
+func (lg *syslog) startLog() (err error) {
+	err = lg.checkPath()
+	if err != nil {
+		err = lg.createDir()
+		if err == nil {
+			lg.file, _ = os.OpenFile(lg.Filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 1444)
+			lg.log = log.New(lg.file, "", log.Ldate|log.Ltime)
+		}
+	}
+	return
 }
 
 // loadCategories method - loads all categories
@@ -72,15 +90,18 @@ func (lg *syslog) AppendCategories(newCategories map[string][]string) {
 
 // WriteLog method - writes the message to the log file
 func (lg *syslog) WriteLog(category string, msg string, trace string) {
-	lg.startLog()
-	val, res := lg.categories[category]
-	if !res {
-		lg.log.Printf("%s The category %s does not exists on %s", lg.categories["warning"][0], category, lg.GetTraceMsg())
-		lg.log.Printf("%s (non existent category) %s on %s", category, msg, trace)
-	} else {
-		lg.log.Printf("%s %s on %s", val[0], msg, trace)
+	err := lg.startLog()
+	if err == nil {
+		val, res := lg.categories[category]
+		if !res {
+			fmt.Printf("%s %s The category %s does not exists on %s\n", lg.getLogDate(),
+				lg.categories["warning"][0], category, lg.GetTraceMsg())
+			lg.log.Printf("%s (non existent category) %s on %s", category, msg, trace)
+		} else {
+			lg.log.Printf("%s %s on %s", val[0], msg, trace)
+		}
+		defer lg.file.Close()
 	}
-	defer lg.file.Close()
 }
 
 // GetTraceMsg method - get the full error stack trace
