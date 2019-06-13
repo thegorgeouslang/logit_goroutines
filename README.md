@@ -108,7 +108,6 @@ func init() {
         fmt.Print(e)                                                                                                
     }                                                                                                               
                                                                                                                     
-    SLog := logit.Syslog                                                                                            
     // changing the default log file path                                                                           
     SLog.Filepath = fmt.Sprintf("%s/%s%s%s", build.Default.GOPATH,                    
         os.Getenv("logfile_path"), //                                                                               
