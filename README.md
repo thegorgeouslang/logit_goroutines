@@ -21,12 +21,12 @@ logit.Syslog.Filepath = fmt.Sprintf("%s%s%s", "docs/log_file_", time.Now().Forma
 ```
 docs/log_file_2019_06_11.txt would be created in the root folder of the project
 
-### To write in the log file you must call the function WriteLog(category string, msg string, errorTrace string):
+### To write in the log file you must call the function *WriteLog(category string, msg string, errorTrace string)*:
 ```Go
 logit.Syslog.WriteLog("error", "This is an error message", logit.Syslog.GetTraceMsg())
 ```
 
-### Available initial categories:
+### Default categories:
 - error
 - emergency
 - alert
@@ -36,7 +36,7 @@ logit.Syslog.WriteLog("error", "This is an error message", logit.Syslog.GetTrace
 - info
 - debug
 
-### More categories can be added by calling the function ogit.Syslog.AppendCategories(map[string][]string):
+### More categories can be added by calling the function *AppendCategories(map[string][]string)*:
 ```Go
 nc := map[string][]string{                                                                            
         "custom1": {"Custom1:", "msg..."},                                                                
