@@ -38,11 +38,11 @@ logit.Syslog.WriteLog("error", "This is an error message", logit.Syslog.GetTrace
 
 ### More categories can be added by calling the function *AppendCategories(map[string][]string)*:
 ```Go
-nc := map[string][]string{                                                                            
-        "custom1": {"Custom1:", "msg..."},                                                                
-        "cutom2":     {"Custom2:", "mgs..."},                                                                        
-    }  
-logit.Syslog.AppendCategories(nc)
+    nc := map[string][]string{                                                                                      
+        "custom1": {"Custom1:", "msg..."},                                                                          
+        "cutom2":  {"Custom2:", "mgs..."},                                                                          
+    }                                                                                                               
+    SLog.AppendCategories(nc)         
 ```
 
 ### Basic use 
