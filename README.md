@@ -75,7 +75,8 @@ func main() {
 2019/06/12 18:21:17 Debug: This is a debug message on /server/go/src/app/main.go:15 PID: 37777    
 
 
-### Better use - Calling from a container and using [godotenv] to retrieve .env file values for path and extension:
+### Better use
+### Calling from a setup container and using [godotenv] to retrieve .env file values for path and extension:
 By calling if from a container you can have fixed customized settings as well as use other dependencies such as [godotenv] for a main configuration file.
 #### .env
 ```
