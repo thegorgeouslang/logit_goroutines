@@ -77,7 +77,8 @@ func main() {
 
 ### Better use
 ### Calling from a setup container and using [godotenv] to retrieve .env file values for path and extension:
-By calling if from a container you can have fixed customized settings as well as use other dependencies such as [godotenv] for a main configuration file.
+By calling if from a container you can have fixed customized settings as well as use other dependencies such as [godotenv] for a main configuration file. (For this example 
+it's necessary to create a logs/ folder inside your GOPATH folder)
 #### .env
 ```
 logfile_path = "logs/"
@@ -122,6 +123,78 @@ func init() {
     }                                                                                                               
     SLog.AppendCategories(nc)                                                                                       
 }                                                                                                           
+```
+##### main.go
+```Go
+package main                                                                                                        
+                                                                                                                    
+import (                                                                                                            
+    "logittest/libs/logger"                                                                                         
+)                                                                                                                   
+                                                                                                                    
+func main() {                                                                                                       
+    logger.SLog.WriteLog("error", "This is an error message", logger.SLog.GetTraceMsg())
+    logger.SLog.WriteLog("custom1", "This is a custom message", logger.SLog.GetTraceMsg())
+}
+```
+2019/06/12 18:21:17 Error: This is an error message on /server/go/src/app/main.go:8 PID: 37777   
+2019/06/12 18:21:17 Cutom1: This is an custom message on /server/go/src/app/main.go:8 PID: 37777    
+
+### Much better use
+### Calling from a setup container and using [godotenv] to retrieve .env file values for path and extension:
+By calling if from a container you can have fixed customized settings as well as use other dependencies such as [godotenv] for a main configuration file. (For this example 
+it's necessary to create a logs/ folder inside your GOPATH folder)
+#### .env
+```
+logfile_path = "logs/"
+logfil_ext = "log"
+```
+
+##### libs/logger/logit-container.go
+```Go
+package logger
+
+import (
+    "fmt"
+    "github.com/joho/godotenv"
+    "github.com/thegorgeouslang/logit"
+    "go/build"
+    "os"
+    "time"
+)
+
+var SLog = *logit.Syslog
+
+func init() {
+    // appending custom categories
+    SLog.AppendCategories(map[string][]string{
+        "godotenv": {"Godotenv error:",
+            "the godotenv dependency is not working properly"},
+    })
+
+    // loading godotenv
+    err := godotenv.Load()
+    if err != nil {
+        // in case of error the path and extension of the log file are being
+        // hardcoded
+        SLog.Filepath = fmt.Sprintf("%s/%s%s%s", build.Default.GOPATH,
+            "logs/", time.Now().Format("2006_01_02"), ".logs")
+        // append
+        SLog.WriteLog("godotenv",
+            "the godotenv dependency is not properly working",
+            SLog.GetTraceMsg())
+    } else { // try to get the values of the .env file
+        // changing the default log file path
+        path := fmt.Sprintf("%s/%s%s%s", build.Default.GOPATH,
+            os.Getenv("logfile_path"), //
+            time.Now().Format("2006_01_02"),
+            os.Getenv("logfile_ext"), //
+        )
+
+        fmt.Println(path)
+        SLog.Filepath = path
+    }
+}
 ```
 ##### main.go
 ```Go
