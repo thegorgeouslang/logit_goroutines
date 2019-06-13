@@ -2,7 +2,7 @@
 
 A Logger interface that prints to the console and append messages to a log file. 
 
-#### By default files are created in the root folder of your project, within the logs/ folder (in case it was not previously created, the app will attempt to create) using the current date of the server as its name and .log extension:
+#### By default files are created in the root folder of your project, within the logs/ folder (the app will attempt to create non existent folders) using the current date of the server as its name and .log extension:
 *logs/2019_06_11.log* 
 
 #### That can be easily changed by:
