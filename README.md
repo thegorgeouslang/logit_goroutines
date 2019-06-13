@@ -17,9 +17,9 @@ logit.Syslog.Filepath = build.Default.GOPATH + "/logs/myapp.log"
 *myapp.log* would be created in your GOPATH folder
 #### or
 ```Go
-logit.Syslog.Filepath = fmt.Sprintf("%s%s%s", "docs/log_file_", time.Now().Format("2006_01_02"), ".txt")
+logit.Syslog.Filepath = fmt.Sprintf("%s/%s%s%s", build.Default.GOPATH, "myapp_logs/log_file_", time.Now().Format("2006_01_02"), ".txt")
 ```
-docs/log_file_2019_06_11.txt would be created in the root folder of the project
+/home/server/go/my_app/logs/log_file_2019_06_11.txt would be created in your GOPATH folder, inside a folder called myapp_logs
 
 ### In case of non existent directory, the app will try to create a dir or nested dir and will throw an error message in case of fail
 
