@@ -3,23 +3,25 @@
 A Logger interface that prints to the console and append messages to a log file. 
 
 #### By default files are created inside logs/ folder using the current date of the server as its name and .log extension:
-**logs/2019_06_11.log** 
+*logs/2019_06_11.log* 
 
 #### That can be easily changed by:
 ```Go
 logit.Syslog.Filepath = "anotherFolder/mylogfile.txt"
 ```
-mylogfile.txt would be created in the anotherFolder, in root folder of the project
+*mylogfile.txt* would be created in the anotherFolder, in root folder of the project
 #### or 
 ````Go
 logit.Syslog.Filepath = build.Default.GOPATH + "/logs/myapp.log"
 ````
-myapp.log would be created in your GOPATH folder
+*myapp.log* would be created in your GOPATH folder
 #### or
 ```Go
 logit.Syslog.Filepath = fmt.Sprintf("%s%s%s", "docs/log_file_", time.Now().Format("2006_01_02"), ".txt")
 ```
 docs/log_file_2019_06_11.txt would be created in the root folder of the project
+
+### In case of non existent directory, the app will try to create a dir or nested dir and will throw an error message in case of fail
 
 ### To write in the log file you must call the function *WriteLog(category string, msg string, errorTrace string)*:
 ```Go
