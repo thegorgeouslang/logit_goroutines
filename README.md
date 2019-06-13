@@ -203,11 +203,9 @@ import (
                                                                                                                     
 func main() {                                                                                                       
     logger.SLog.WriteLog("error", "This is an error message", logger.SLog.GetTraceMsg())
-    logger.SLog.WriteLog("custom1", "This is a custom message", logger.SLog.GetTraceMsg())
 }
 ```
 2019/06/12 18:21:17 Error: This is an error message on /server/go/src/app/main.go:8 PID: 37777   
-2019/06/12 18:21:17 Cutom1: This is an custom message on /server/go/src/app/main.go:8 PID: 37777    
 
 Have fun!
 
