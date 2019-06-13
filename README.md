@@ -7,7 +7,7 @@ logs/2019_06_11.log
 
 #### That can be easily changed by:
 ```Go
-logit.Syslog.Filepath = "mylogfile.txt"
+logit.Syslog.Filepath = "anotherFolder/mylogfile.txt"
 ```
 mylogfile.txt would be created in the root folder of the project
 #### or 
