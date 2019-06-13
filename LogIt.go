@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"runtime"
 	"time"
 )
@@ -29,8 +30,21 @@ func init() {
 	Syslog = &lg
 }
 
+// checkPath method - verifies if the directory exists and is writable
+func (lg *syslog) checkPath() bool {
+	_, err := os.Stat(filepath.Dir(lg.Filepath)) // check if directory exists and is writable
+	if err != nil {
+		when := time.Now().Format("2006-01-02 15:04:05")
+		msg := fmt.Sprintf("The specified path %s for dependency LogIt doesn't exists or is not writable", lg.Filepath)
+		fmt.Printf("%s %s %s on %s\n", when, lg.categories["warning"][0], msg, lg.GetTraceMsg())
+		return false
+	}
+	return true
+}
+
 // startLog method - changes the default filepath
 func (lg *syslog) startLog() {
+	lg.checkPath()
 	lg.file, _ = os.OpenFile(lg.Filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 1444)
 	lg.log = log.New(lg.file, "", log.Ldate|log.Ltime)
 }
@@ -61,7 +75,8 @@ func (lg *syslog) WriteLog(category string, msg string, trace string) {
 	lg.startLog()
 	val, res := lg.categories[category]
 	if !res {
-		lg.log.Printf("The log category does not exists: %s", lg.GetTraceMsg())
+		lg.log.Printf("%s The category %s does not exists on %s", lg.categories["warning"][0], category, lg.GetTraceMsg())
+		lg.log.Printf("%s (non existent category) %s on %s", category, msg, trace)
 	} else {
 		lg.log.Printf("%s %s on %s", val[0], msg, trace)
 	}
