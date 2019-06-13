@@ -30,8 +30,8 @@ logit.Syslog.WriteLog("error", "This is an error message", logit.Syslog.GetTrace
 - error
 - emergency
 - alert
-- -critical
-- -warning
+- critical
+- warning
 - notice
 - info
 - debug
