@@ -3,7 +3,7 @@
 A Logger interface that prints to the console and append messages to a log file. 
 
 #### By default files are created inside logs/ folder using the current date of the server as its name and .log extension:
-logs/2019_06_11.log (in case of non existent directory, the app will try to create one and throw an error message in case of fail)
+**logs/2019_06_11.log** 
 
 #### That can be easily changed by:
 ```Go
