@@ -9,7 +9,7 @@ logs/2019_06_11.log
 ```Go
 logit.Syslog.Filepath = "anotherFolder/mylogfile.txt"
 ```
-mylogfile.txt would be created in the root folder of the project
+mylogfile.txt would be created in the anotherFolder, in root folder of the project
 #### or 
 ````Go
 logit.Syslog.Filepath = build.Default.GOPATH + "/logs/myapp.log"
