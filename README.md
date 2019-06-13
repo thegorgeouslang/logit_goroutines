@@ -2,8 +2,8 @@
 
 A Logger interface that prints to the console and append messages to a log file. 
 
-#### By default files are created inside logs/ folder (that must exist in the project root folder) using the current date of the server as its name and .log extension:
-logs/2019_06_11.log
+#### By default files are created inside logs/ folder using the current date of the server as its name and .log extension:
+logs/2019_06_11.log (in case of non existent directory, the app will try to create one and throw an error message in case of fail)
 
 #### That can be easily changed by:
 ```Go
@@ -77,8 +77,7 @@ func main() {
 
 ### Better use
 ### Calling from a setup container and using [godotenv] to retrieve .env file values for path and extension:
-By calling if from a container you can have fixed customized settings as well as use other dependencies such as [godotenv] for a main configuration file. (For this example 
-it's necessary to create a logs/ folder inside your GOPATH folder)
+By calling if from a container you can have fixed customized settings as well as use other dependencies such as [godotenv] for a main configuration file. 
 #### .env
 ```
 logfile_path = "logs/"
@@ -140,7 +139,6 @@ func main() {
 2019/06/12 18:21:17 Cutom1: This is an custom message on /server/go/src/app/main.go:8 PID: 37777    
 
 ### Much better use
-### It's necessary to create a logs/ folder inside your GOPATH folder
 #### .env
 ```
 logfile_path = "logs/"
