@@ -45,7 +45,7 @@ func (lg *syslog) createDir() (err error) {
 		fmt.Printf("%s %s on %s\n", lg.getLogDate(),
 			msg, lg.GetTraceMsg())
 	}
-	return err
+	return
 }
 
 // checkPath method - verifies if the directory exists and is writable
