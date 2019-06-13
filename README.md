@@ -140,9 +140,7 @@ func main() {
 2019/06/12 18:21:17 Cutom1: This is an custom message on /server/go/src/app/main.go:8 PID: 37777    
 
 ### Much better use
-### Calling from a setup container and using [godotenv] to retrieve .env file values for path and extension:
-By calling if from a container you can have fixed customized settings as well as use other dependencies such as [godotenv] for a main configuration file. (For this example 
-it's necessary to create a logs/ folder inside your GOPATH folder)
+### It's necessary to create a logs/ folder inside your GOPATH folder
 #### .env
 ```
 logfile_path = "logs/"
