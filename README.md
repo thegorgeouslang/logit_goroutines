@@ -61,13 +61,21 @@ func main() {
 ```
 
 2019/06/12 18:21:17 Error: This is an error message on /server/go/src/app/main.go:8 PID: 37777
+
 2019/06/12 18:21:17 Emergency: This is an emergency message on /server/go/src/app/main.go:9 PID: 37777
+
 2019/06/12 18:21:17 Alert: This is an alert message on /yserver/go/src/app/main.go:10 PID: 37777
+
 2019/06/12 18:21:17 Critical: This is a critical message on /server/go/src/app/main.go:11 PID: 37777
+
 2019/06/12 18:21:17 Warning: This is a warning message on /server/go/src/app/main.go:12 PID: 37777
+
 2019/06/12 18:21:17 Notice: This is a notice message on /server/go/src/app/main.go:13 PID: 37777
+
 2019/06/12 18:21:17 Info: This is a info message on /server/go/src/app/main.go:14 PID: 37777
+
 2019/06/12 18:21:17 Debug: This is a debug message on /server/go/src/app/main.go:15 PID: 37777
+
 
 ### Better use - Calling from a container and using [godotenv] to retrieve .env file values for path and extension:
 By calling if from a container you can have fixed customized settings as well as use other dependencies such as [godotenv] for a main configuration file.
