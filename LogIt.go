@@ -24,15 +24,14 @@ var Syslog *syslog
 // init function - initialize values and processes of the file
 func init() {
 	lg := syslog{}
-	lg.Filepath = "logs/"
+	lg.Filepath = fmt.Sprintf("%s%s%s", "logs/", time.Now().Format("2006_01_02"), ".log")
 	lg.loadCategories() // loads all categories
 	Syslog = &lg
 }
 
 // startLog method - changes the default filepath
 func (lg *syslog) startLog() {
-	path := fmt.Sprintf("%s%s%s", lg.Filepath, time.Now().Format("2006_01_02"), ".log")
-	lg.file, _ = os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 1444)
+	lg.file, _ = os.OpenFile(lg.Filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 1444)
 	lg.log = log.New(lg.file, "", log.Ldate|log.Ltime)
 }
 
