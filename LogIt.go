@@ -1,5 +1,5 @@
 // Author: James Mallon <jamesmallondev@gmail.com>
-// logit package - lib created to print and write file logs
+// logit package - lib created to print and write logs
 package logit
 
 import (
@@ -25,8 +25,7 @@ var Syslog *syslog
 // init function - initialize values and processes of the file
 func init() {
 	lg := syslog{}
-	lg.Filepath = fmt.Sprintf("%s%s%s", "logs/", time.Now().Format("2006_01_02"),
-		".log")
+	lg.Filepath = fmt.Sprintf("%s%s.log", "logs/", time.Now().Format("2006_01_02"))
 	lg.loadCategories() // loads all categories
 	Syslog = &lg
 }
@@ -54,7 +53,7 @@ func (lg *syslog) checkPath() (err error) {
 	return
 }
 
-// startLog method - changes the default filepath
+// startLog method - processes the dir. and open the log file
 func (lg *syslog) startLog() (err error) {
 	err = lg.checkPath()
 	if err != nil {
