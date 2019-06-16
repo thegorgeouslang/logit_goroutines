@@ -93,6 +93,22 @@ func TestWriteLog(t *testing.T) {
 	os.Remove("logs/")         // remove the dir
 }
 
+//// Test function BenchmarkWriteLog to evaluate the WriteLog method
+//func BenchmarkWriteLog(b *testing.B) {
+//	Syslog.Filepath = fmt.Sprintf("%s%s.log", "logs/", time.Now().Format("2006_01_02"))
+//	Syslog.WriteLog("debug", "Testing...", Syslog.GetTraceMsg())
+//
+//	// open and read the first line of the log file
+//	file, _ := os.Open(Syslog.Filepath)
+//	fs := bufio.NewScanner(file)
+//	fs.Scan()
+//	fline := fs.Text()
+//
+//	os.Remove(Syslog.Filepath) // remove the file
+//	os.Remove("logs/")         // remove the dir
+//	b.N
+//}
+
 // Test function TestGetTraceMsg to evaluate GetTraceMsg method
 func TestGetTraceMsg(t *testing.T) {
 	pattern := fmt.Sprintf(".*PID: %d", os.Getpid())
