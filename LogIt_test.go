@@ -11,6 +11,11 @@ import (
 	"time"
 )
 
+// init function - data and process initialization
+func init() {
+	Syslog.Filepath = "log/"
+}
+
 // Test function TestGetLogDate to evaluate getLogDate
 func TestGetLogDate(t *testing.T) {
 
@@ -24,8 +29,7 @@ func TestGetLogDate(t *testing.T) {
 
 // Test function TestCreateDir to evaluate the createDir method
 func TestCreateDir(t *testing.T) {
-	Syslog.Filepath = "logs/" // non existent dir
-	Syslog.createDir()        // creates the folder
+	Syslog.createDir() // creates the folder
 	_, e := os.Stat(Syslog.Filepath)
 	if e != nil { // check for non existent dir
 		t.Errorf("Expected the directory to exists.")
@@ -35,7 +39,6 @@ func TestCreateDir(t *testing.T) {
 
 // Test function TestCheckPath to evaluate the checkPath method
 func TestCheckPath(t *testing.T) {
-	Syslog.Filepath = "none/" // non existent dir
 	e := Syslog.checkPath()
 	if e == nil { // check for non existent dir
 		t.Errorf("Expected the directory to not exists.")
@@ -44,7 +47,6 @@ func TestCheckPath(t *testing.T) {
 
 // Test function TestStartLog to evaluate startLog method
 func TestStartLog(t *testing.T) {
-	Syslog.Filepath = "logs/"
 	Syslog.startLog() // check the existence of the folder and create it
 	_, e := os.Stat(Syslog.Filepath)
 	if e != nil { // check for non existent dir
@@ -93,21 +95,16 @@ func TestWriteLog(t *testing.T) {
 	os.Remove("logs/")         // remove the dir
 }
 
-//// Test function BenchmarkWriteLog to evaluate the WriteLog method
-//func BenchmarkWriteLog(b *testing.B) {
-//	Syslog.Filepath = fmt.Sprintf("%s%s.log", "logs/", time.Now().Format("2006_01_02"))
-//	Syslog.WriteLog("debug", "Testing...", Syslog.GetTraceMsg())
-//
-//	// open and read the first line of the log file
-//	file, _ := os.Open(Syslog.Filepath)
-//	fs := bufio.NewScanner(file)
-//	fs.Scan()
-//	fline := fs.Text()
-//
-//	os.Remove(Syslog.Filepath) // remove the file
-//	os.Remove("logs/")         // remove the dir
-//	b.N
-//}
+// Test function BenchmarkWriteLog to evaluate the WriteLog method
+func BenchmarkWriteLog(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		Syslog.Filepath = fmt.Sprintf("%s%s.log", "logs/", time.Now().Format("2006_01_02"))
+		Syslog.WriteLog("debug", "Testing...", Syslog.GetTraceMsg())
+
+		os.Remove(Syslog.Filepath) // remove the file
+		os.Remove("logs/")         // remove the dir
+	}
+}
 
 // Test function TestGetTraceMsg to evaluate GetTraceMsg method
 func TestGetTraceMsg(t *testing.T) {
