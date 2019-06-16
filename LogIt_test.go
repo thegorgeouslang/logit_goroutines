@@ -18,12 +18,10 @@ func init() {
 
 // Test function TestGetLogDate to evaluate getLogDate
 func TestGetLogDate(t *testing.T) {
-
-	logDate := Syslog.getLogDate()
-	currDate := time.Now().Format("2006/01/02 15:04:05")
-
 	if logDate != currDate {
-		t.Errorf("Expected return from getLogDate to be the current date %s, but got %s ", currDate, logDate)
+		t.Errorf("Expected return from getLogDate to be the current date %s, but got %s ",
+			time.Now().Format("2006/01/02 15:04:05"), // get the current date
+			Syslog.getLogDate())                      // get the method date
 	}
 }
 
