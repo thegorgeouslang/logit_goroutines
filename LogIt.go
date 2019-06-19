@@ -22,7 +22,8 @@ type syslog struct {
 // to be used as an external pointer to the syslog struct type
 var Syslog *syslog
 
-// init function - initialize values and performs a pre instantiation and processes of the file
+// init function - initialize values and performs a pre instantiation to make this lib
+// methods work as static methods and avoid external instantiation of the struct
 func init() {
 	lg := syslog{} // pre instantiation
 	lg.Filepath = fmt.Sprintf("%s%s.log", "logs/", time.Now().Format("2006_01_02"))
