@@ -22,12 +22,12 @@ type syslog struct {
 // to be used as an external pointer to the syslog struct type
 var Syslog *syslog
 
-// init function - initialize values and processes of the file
+// init function - initialize values and performs a pre instantiation and processes of the file
 func init() {
-	lg := syslog{}
+	lg := syslog{} // pre instantiation
 	lg.Filepath = fmt.Sprintf("%s%s.log", "logs/", time.Now().Format("2006_01_02"))
 	lg.loadCategories() // loads all categories
-	Syslog = &lg
+	Syslog = &lg        // exported variable receives the instance
 }
 
 // getLogDate method - returns a string with the log format date
