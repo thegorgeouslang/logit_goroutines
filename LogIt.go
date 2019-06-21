@@ -49,15 +49,17 @@ func (lg *syslog) createDir() (err error) {
 }
 
 // checkPath method - verifies if the directory exists and is writable
-func (lg *syslog) checkPath() (err error) {
-	_, err = os.Stat(filepath.Dir(lg.Filepath)) // check if directory exists and is writable
-	return
+func (lg *syslog) checkPath() bool {
+	if _, err := os.Stat(filepath.Dir(lg.Filepath)); os.IsNotExist(err) {
+		return false
+	}
+	return true
 }
 
 // startLog method - processes the dir. and open the log file
 func (lg *syslog) startLog() (err error) {
-	err = lg.checkPath()
-	if err == nil {
+	ex := lg.checkPath()
+	if !ex {
 		err = lg.createDir()
 		if err == nil {
 			lg.file, _ = os.OpenFile(lg.Filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 1444)
