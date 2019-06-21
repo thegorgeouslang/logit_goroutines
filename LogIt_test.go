@@ -18,6 +18,8 @@ func init() {
 
 // Test function TestGetLogDate to evaluate getLogDate
 func TestGetLogDate(t *testing.T) {
+	logDate := Syslog.getLogDate()
+	currDate := time.Now().Format("2006/01/02 15:04:05")
 	if logDate != currDate {
 		t.Errorf("Expected return from getLogDate to be the current date %s, but got %s ",
 			time.Now().Format("2006/01/02 15:04:05"), // get the current date
@@ -38,7 +40,7 @@ func TestCreateDir(t *testing.T) {
 // Test function TestCheckPath to evaluate the checkPath method
 func TestCheckPath(t *testing.T) {
 	e := Syslog.checkPath()
-	if e == nil { // check for non existent dir
+	if e { // check for non existent dir
 		t.Errorf("Expected the directory to not exists.")
 	}
 }
