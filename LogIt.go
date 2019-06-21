@@ -61,10 +61,10 @@ func (lg *syslog) startLog() (err error) {
 	ex := lg.checkPath()
 	if !ex {
 		err = lg.createDir()
-		if err == nil {
-			lg.file, _ = os.OpenFile(lg.Filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 1444)
-			lg.log = log.New(lg.file, "", log.Ldate|log.Ltime)
-		}
+	}
+	if err == nil {
+		lg.file, _ = os.OpenFile(lg.Filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 1444)
+		lg.log = log.New(lg.file, "", log.Ldate|log.Ltime)
 	}
 	return
 }
