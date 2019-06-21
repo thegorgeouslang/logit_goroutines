@@ -57,7 +57,7 @@ func (lg *syslog) checkPath() (err error) {
 // startLog method - processes the dir. and open the log file
 func (lg *syslog) startLog() (err error) {
 	err = lg.checkPath()
-	if err != nil {
+	if err == nil {
 		err = lg.createDir()
 		if err == nil {
 			lg.file, _ = os.OpenFile(lg.Filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 1444)
