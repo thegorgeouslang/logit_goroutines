@@ -39,13 +39,19 @@ func (lg *syslog) getLogDate() string {
 
 // createDir function - function attempts to create the log file dir in case it doesn't exists
 func (lg *syslog) createDir() (err error) {
-	err = os.MkdirAll(filepath.Dir(lg.Filepath), 0755)
-	if err != nil {
-		msg := fmt.Sprintf("Logit error: path %s doesn't exists or is not writable and cannot be created",
-			lg.Filepath)
-		fmt.Printf("%s %s on %s\n", lg.getLogDate(),
-			msg, lg.GetTraceMsg())
-	}
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		err = os.MkdirAll(filepath.Dir(lg.Filepath), 0755)
+		if err != nil {
+			msg := fmt.Sprintf("Logit error: path %s doesn't exists or is not writable and cannot be created",
+				lg.Filepath)
+			fmt.Printf("%s %s on %s\n", lg.getLogDate(),
+				msg, lg.GetTraceMsg())
+		}
+		defer wg.Done()
+	}()
+	wg.Wait()
 	return
 }
 
@@ -63,10 +69,16 @@ func (lg *syslog) startLog() (err error) {
 	if !ex {
 		err = lg.createDir()
 	}
-	if err == nil {
-		lg.file, _ = os.OpenFile(lg.Filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 1444)
-		lg.log = log.New(lg.file, "", log.Ldate|log.Ltime)
-	}
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		if err == nil {
+			lg.file, _ = os.OpenFile(lg.Filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 1444)
+			lg.log = log.New(lg.file, "", log.Ldate|log.Ltime)
+		}
+		defer wg.Done()
+	}()
+	wg.Wait()
 	return
 }
 
