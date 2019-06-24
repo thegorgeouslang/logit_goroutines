@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"sync"
 	"time"
 )
 
@@ -92,18 +93,24 @@ func (lg *syslog) AppendCategories(newCategories map[string][]string) {
 
 // WriteLog method - writes the message to the log file
 func (lg *syslog) WriteLog(category string, msg string, trace string) {
-	err := lg.startLog()
-	if err == nil {
-		val, res := lg.categories[category]
-		if !res {
-			fmt.Printf("%s %s The category %s does not exists on %s\n", lg.getLogDate(),
-				lg.categories["warning"][0], category, lg.GetTraceMsg())
-			lg.log.Printf("%s (non existent category) %s on %s", category, msg, trace)
-		} else {
-			lg.log.Printf("%s %s on %s", val[0], msg, trace)
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		err := lg.startLog()
+		if err == nil {
+			val, res := lg.categories[category]
+			if !res {
+				fmt.Printf("%s %s The category %s does not exists on %s\n", lg.getLogDate(),
+					lg.categories["warning"][0], category, lg.GetTraceMsg())
+				lg.log.Printf("%s (non existent category) %s on %s", category, msg, trace)
+			} else {
+				lg.log.Printf("%s %s on %s", val[0], msg, trace)
+			}
+			defer lg.file.Close()
 		}
-		defer lg.file.Close()
-	}
+		defer wg.Done()
+	}()
+	wg.Wait()
 }
 
 // GetTraceMsg method - get the full error stack trace
