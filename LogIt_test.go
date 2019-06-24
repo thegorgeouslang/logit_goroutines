@@ -97,13 +97,12 @@ func TestWriteLog(t *testing.T) {
 
 // Test function BenchmarkWriteLog to evaluate the WriteLog method
 func BenchmarkWriteLog(b *testing.B) {
+	Syslog.Filepath = fmt.Sprintf("%s%s.log", "logs/", time.Now().Format("2006_01_02"))
 	for i := 0; i < b.N; i++ {
-		Syslog.Filepath = fmt.Sprintf("%s%s.log", "logs/", time.Now().Format("2006_01_02"))
 		Syslog.WriteLog("debug", "Testing...", Syslog.GetTraceMsg())
-
-		os.Remove(Syslog.Filepath) // remove the file
-		os.Remove("logs/")         // remove the dir
 	}
+	os.Remove(Syslog.Filepath) // remove the file
+	os.Remove("logs/")         // remove the dir
 }
 
 // Test function TestGetTraceMsg to evaluate GetTraceMsg method
