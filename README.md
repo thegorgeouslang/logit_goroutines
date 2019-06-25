@@ -129,7 +129,7 @@ func init() {
 package main                                                                                                        
                                                                                                                     
 import (                                                                                                            
-    log "[yourapp]logger"                                                                                         
+    log "[yourapp]/logger"                                                                                         
 )                                                                                                                   
                                                                                                                     
 func main() {                      
