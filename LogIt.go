@@ -44,7 +44,7 @@ func (lg *syslog) createDir() (err error) {
 	go func() {
 		err = os.MkdirAll(filepath.Dir(lg.Filepath), 0755)
 		if err != nil {
-			msg := fmt.Sprintf("Logit error: path %s doesn't exists or is not writable and cannot be created",
+			msg := fmt.Sprintf("Logit error: path %s doesn't exists (and cannot be created) or is not writable ",
 				lg.Filepath)
 			fmt.Printf("%s %s on %s\n", lg.getLogDate(),
 				msg, lg.GetTraceMsg())
@@ -66,19 +66,21 @@ func (lg *syslog) checkPath() bool {
 // startLog method - processes the dir. and open the log file
 func (lg *syslog) startLog() (err error) {
 	ex := lg.checkPath()
-	if !ex {
+	if !ex { // in case of non existent directory a creation attempt will run
 		err = lg.createDir()
 	}
-	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		if err == nil {
-			lg.file, _ = os.OpenFile(lg.Filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 1444)
-			lg.log = log.New(lg.file, "", log.Ldate|log.Ltime)
-		}
-		defer wg.Done()
-	}()
-	wg.Wait()
+	if err == nil { // if no errors happened while trying to create the dir.
+		var wg sync.WaitGroup
+		wg.Add(1)
+		go func() {
+			if err == nil {
+				lg.file, _ = os.OpenFile(lg.Filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 1444)
+				lg.log = log.New(lg.file, "", log.Ldate|log.Ltime)
+			}
+			defer wg.Done()
+		}()
+		wg.Wait()
+	}
 	return
 }
 
@@ -105,11 +107,11 @@ func (lg *syslog) AppendCategories(newCategories map[string][]string) {
 
 // WriteLog method - writes the message to the log file
 func (lg *syslog) WriteLog(category string, msg string, trace string) {
-	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		err := lg.startLog()
-		if err == nil {
+	err := lg.startLog()
+	if err == nil {
+		var wg sync.WaitGroup
+		wg.Add(1)
+		go func() {
 			val, res := lg.categories[category]
 			if !res {
 				fmt.Printf("%s %s The category %s does not exists on %s\n", lg.getLogDate(),
@@ -119,10 +121,10 @@ func (lg *syslog) WriteLog(category string, msg string, trace string) {
 				lg.log.Printf("%s %s on %s", val[0], msg, trace)
 			}
 			defer lg.file.Close()
-		}
-		defer wg.Done()
-	}()
-	wg.Wait()
+			defer wg.Done()
+		}()
+		wg.Wait()
+	}
 }
 
 // GetTraceMsg method - get the full error stack trace
