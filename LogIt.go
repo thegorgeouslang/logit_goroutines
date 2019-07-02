@@ -29,7 +29,23 @@ func init() {
 	lg := syslog{} // pre instantiation
 	lg.Filepath = fmt.Sprintf("%s%s.log", "logs/", time.Now().Format("2006_01_02"))
 	lg.loadCategories() // loads all categories
-	Syslog = &lg        // exported variable receives the instance
+	var e error
+	if !lg.checkPath() { // in case of non existent directory a creation attempt will run
+		e = lg.createDir()
+	}
+	if e == nil { // if no errors happened while trying to create the dir.
+		var wg sync.WaitGroup
+		wg.Add(1)
+		go func() {
+			if e == nil {
+				lg.file, _ = os.OpenFile(lg.Filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 1444)
+				lg.log = log.New(lg.file, "", log.Ldate|log.Ltime)
+			}
+			defer wg.Done()
+		}()
+		wg.Wait()
+	}
+	Syslog = &lg // exported variable receives the instance
 }
 
 // getLogDate method - returns a string with the log format date
@@ -63,27 +79,6 @@ func (lg *syslog) checkPath() bool {
 	return true
 }
 
-// startLog method - processes the dir. and open the log file
-func (lg *syslog) startLog() (err error) {
-	ex := lg.checkPath()
-	if !ex { // in case of non existent directory a creation attempt will run
-		err = lg.createDir()
-	}
-	if err == nil { // if no errors happened while trying to create the dir.
-		var wg sync.WaitGroup
-		wg.Add(1)
-		go func() {
-			if err == nil {
-				lg.file, _ = os.OpenFile(lg.Filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 1444)
-				lg.log = log.New(lg.file, "", log.Ldate|log.Ltime)
-			}
-			defer wg.Done()
-		}()
-		wg.Wait()
-	}
-	return
-}
-
 // loadCategories method - loads all categories
 func (lg *syslog) loadCategories() {
 	lg.categories = map[string][]string{
@@ -107,24 +102,21 @@ func (lg *syslog) AppendCategories(newCategories map[string][]string) {
 
 // WriteLog method - writes the message to the log file
 func (lg *syslog) WriteLog(category string, msg string, trace string) {
-	err := lg.startLog()
-	if err == nil {
-		var wg sync.WaitGroup
-		wg.Add(1)
-		go func() {
-			val, res := lg.categories[category]
-			if !res {
-				fmt.Printf("%s %s The category %s does not exists on %s\n", lg.getLogDate(),
-					lg.categories["warning"][0], category, lg.GetTraceMsg())
-				lg.log.Printf("%s (non existent category) %s on %s", category, msg, trace)
-			} else {
-				lg.log.Printf("%s %s on %s", val[0], msg, trace)
-			}
-			defer lg.file.Close()
-			defer wg.Done()
-		}()
-		wg.Wait()
-	}
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		val, res := lg.categories[category]
+		if !res {
+			fmt.Printf("%s %s The category %s does not exists on %s\n", lg.getLogDate(),
+				lg.categories["warning"][0], category, lg.GetTraceMsg())
+			lg.log.Printf("%s (non existent category) %s on %s", category, msg, trace)
+		} else {
+			lg.log.Printf("%s %s on %s", val[0], msg, trace)
+		}
+		defer lg.file.Close()
+		defer wg.Done()
+	}()
+	wg.Wait()
 }
 
 // GetTraceMsg method - get the full error stack trace

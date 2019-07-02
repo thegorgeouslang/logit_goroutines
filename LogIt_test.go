@@ -45,16 +45,6 @@ func TestCheckPath(t *testing.T) {
 	}
 }
 
-// Test function TestStartLog to evaluate startLog method
-func TestStartLog(t *testing.T) {
-	Syslog.startLog() // check the existence of the folder and create it
-	_, e := os.Stat(Syslog.Filepath)
-	if e != nil { // check for non existent dir
-		t.Errorf("Expected the directory to exists.")
-	}
-	os.Remove(Syslog.Filepath) // remove the dir
-}
-
 // Test function TestLoadCategories to evaluate loadCategories method
 func TestLoadCategories(t *testing.T) {
 	Syslog.loadCategories()
